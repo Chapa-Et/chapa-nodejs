@@ -30,19 +30,19 @@
 **NPM**
 
 ```bash
-$ npm install chapa-nodejs
+npm install chapa-nodejs
 ```
 
 **Yarn**
 
 ```bash
-$ yarn add chapa-nodejs
+yarn add chapa-nodejs
 ```
 
 **Pnpm**
 
 ```bash
-$ pnpm add chapa-nodejs
+pnpm add chapa-nodejs
 ```
 
 ## Getting started
@@ -59,7 +59,7 @@ Keep in mind to load your secret key from environment variable
 import { Chapa } from 'chapa-nodejs';
 
 const chapa = new Chapa({
-  secretKey: 'your-chapa-secret-key',
+  secretKey: process.env.CHAPA_SECRET_KEY,
 });
 ```
 
@@ -67,7 +67,7 @@ const chapa = new Chapa({
 
 ### Generate Transaction Reference
 
-This utility method of `Chapa` instance allows you to generating a customizable random alpha numberic transaction reference.
+This utility method of the `Chapa` instance allows you to generate a customizable random alphanumeric transaction reference.
 
 ```typescript
 const tx_ref = await chapa.genTxRef(); // result: TX-JHBUVLM7HYMSWDA
@@ -83,7 +83,7 @@ const tx_ref = await chapa.genTxRef({
 
 ### Initialize Transaction
 
-To initialize a transaction, we have two possilbe ways. The first one is for web payment, simply call the `initialize` method from `Chapa` instance, and pass to it `InitializeOptions` options. For mobile payment use `mobileInitialize`, it accepts and returns the same format as the `initialize` method.
+To initialize a transaction, we have two possible ways. The first one is for web payment, simply call the `initialize` method from `Chapa` instance, and pass to it `InitializeOptions` options. For mobile payment use `mobileInitialize`, it accepts and returns the same format as the `initialize` method.
 
 ```typescript
 // Generate transaction reference using our utility method or provide your own
@@ -275,7 +275,7 @@ const response = await chapa.createSubaccount({
 interface CreateSubaccountOptions {
   business_name: string;
   account_name: string;
-  bank_code: number;
+  bank_code: string;
   account_number: string;
   split_type: SplitType;
   split_value: number;
@@ -463,7 +463,7 @@ interface TransferResponse {
 
 ### Bulk Transfer
 
-This section describes how to send funds to Bank accounts in bulk. To do this, you'll provide an array of objects called e bulk_data. Each item in this array contains details for one transfer—the same details you specify when making a single transfer. To initiate a transfer, simply call the `bulkTransfer` method from `Chapa` instance, and pass to it `BulkTransferOptions` options.
+This section describes how to send funds to Bank accounts in bulk. To do this, you'll provide an array of objects called `bulk_data`. Each item in this array contains details for one transfer—the same details you specify when making a single transfer. To initiate a transfer, simply call the `bulkTransfer` method from `Chapa` instance, and pass to it `BulkTransferOptions` options.
 
 ```typescript
 const response = await chapa.bulkTransfer({
@@ -473,14 +473,14 @@ const response = await chapa.bulkTransfer({
     {
       account_name: 'John Doe',
       account_number: '09xxxxxxxx',
-      amount: 1,
+      amount: '1',
       reference: 'b1111124',
       bank_code: 128,
     },
     {
       account_name: 'John Doe',
       account_number: '09xxxxxxxx',
-      amount: 1,
+      amount: '1',
       reference: 'b2222e5r',
       bank_code: 128,
     },
@@ -625,8 +625,8 @@ This section describes how to integrate direct charges. To initiate a direct cha
 ```typescript
 const response = await chapa.directCharge({
   first_name: 'Fireayehu',
-  last_name: 'Zekarias'
-  email:"test@gmail.com",
+  last_name: 'Zekarias',
+  email:'test@gmail.com',
   mobile: '09xxxxxxxx',
   currency: 'ETB',
   amount: '1',
