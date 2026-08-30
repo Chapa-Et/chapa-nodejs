@@ -23,6 +23,7 @@
 - Direct Charge
 - Authorize Direct Charge
 - Generate Transaction Reference (Utiltiy Function)
+- Verify Webhook Signature (Utility Function)
 - Full TypeScript Support
 
 ## Installation
@@ -720,6 +721,33 @@ export interface AuthorizeDirectChargeResponse {
   trx_ref: string;
   processor_id: string;
 }
+```
+
+### Verify Webhook Signature
+
+To securely verify webhook events sent by Chapa, use the `verifyWebhookSignature` utility function. It computes an HMAC-SHA256 hash using your secret key and performs a constant-time comparison against the `x-chapa-signature` (or `Chapa-Signature`) header.
+
+```typescript
+import { verifyWebhookSignature } from 'chapa-nodejs';
+
+// In an Express.js route handler (using raw or string payload)
+app.post('/webhook/chapa', (req, res) => {
+  const signature = req.headers['x-chapa-signature'] as string;
+  const rawBody = req.body; // Raw string or Buffer
+  const secretKey = process.env.CHAPA_SECRET_KEY!;
+
+  const isValid = verifyWebhookSignature(rawBody, signature, secretKey);
+
+  if (!isValid) {
+    return res.status(401).send('Invalid signature');
+  }
+
+  // Signature verified — safely process event
+  const event = typeof rawBody === 'string' ? JSON.parse(rawBody) : rawBody;
+  console.log('Webhook received:', event);
+
+  return res.status(200).send('OK');
+});
 ```
 
 ## Stay in touch
